@@ -5,7 +5,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "check": "node --check dist/embossing-tape-card.js && node --check dist/embossing-tape-card-core.js && node --check dist/embossing-tape-render.js && node --check dist/embossing-tape-utils.js"
+    "check": "node --check dist/ha-embossing-tape.js && node --check dist/embossing-tape-card.js && node --check dist/embossing-tape-card-core.js && node --check dist/embossing-tape-render.js && node --check dist/embossing-tape-utils.js"
   },
   "type": "module"
 }
