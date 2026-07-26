@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 280">
+  <defs>
+    <linearGradient id="t" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#26292d"/><stop offset="1" stop-color="#070809"/></linearGradient>
+    <filter id="s"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-opacity=".55"/></filter>
+  </defs>
+  <rect x="35" y="52" width="1130" height="176" rx="16" fill="url(#t)" filter="url(#s)"/>
+  <text x="600" y="169" text-anchor="middle" font-family="Arial Narrow,Arial,sans-serif" font-size="84" letter-spacing="13" fill="#edf0f2" stroke="#fff" stroke-width="1">EMBOSSING TAPE CARD</text>
+  <text x="603" y="172" text-anchor="middle" font-family="Arial Narrow,Arial,sans-serif" font-size="84" letter-spacing="13" fill="none" stroke="#000" stroke-width="4" opacity=".7">EMBOSSING TAPE CARD</text>
+</svg>
