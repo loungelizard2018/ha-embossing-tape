@@ -1,0 +1,6 @@
+type: custom:embossing-tape-card
+entity: sensor.bigpool_cpu_temperature
+suffix: " C"
+decimals: 0
+tape_color: "#17191c"
+emboss_color: "#e7e8e9"
