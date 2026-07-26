@@ -1,0 +1,20 @@
+type: custom:embossing-tape-card
+entity: input_text.house_mode
+prefix: "MODE "
+max_length: 24
+pad_to: 18
+align: center
+tape_color: "#101214"
+tape_edge_color: "#030405"
+emboss_color: "#f1f2f3"
+surface: satin
+mount: panel
+mount_color: "#111315"
+screws: true
+screw_color: "#090a0b"
+screw_size: 24
+max_width: 720
+show_name: true
+name: HOUSE MODE
+tap_action:
+  action: more-info
