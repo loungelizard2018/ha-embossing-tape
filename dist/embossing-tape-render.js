@@ -51,7 +51,7 @@ export function renderMarkup(cfg,text,friendlyName,textChanged,actionEnabled) {
     .emboss-face{fill:${cfg.emboss_color};stroke:rgba(255,255,255,.22);stroke-width:.45px;filter:url(#letterFace)}
     .emboss-glint{fill:none;stroke:rgba(255,255,255,.55);stroke-width:.42px;opacity:.8;transform:translate(-.45px,-.55px)}
     .caption{margin:6px 12px 0;text-align:center;color:${cfg.name_color};font-size:${Number(cfg.name_size)}px;line-height:1.3}
-    @keyframes pressIn{0%{opacity:.35;transform:translateY(-3px) scale(1.035);filter:blur(.5px)}55%{opacity:1;transform:translateY(1px) scale(.992);filter:blur(0)}100%{opacity:1;transform:none}}
+    @keyframes pressIn{0%{opacity:.35;filter:blur(.5px)}55%{opacity:1;filter:blur(0)}100%{opacity:1;filter:none}}
     @media(prefers-reduced-motion:reduce){.character{animation:none!important}}
   </style><ha-card><div class="card" role="button" tabindex="${actionEnabled?0:-1}" aria-label="${esc(`${friendlyName}: ${text.trim()}`)}">
   <svg viewBox="0 0 ${viewW.toFixed(2)} ${viewH.toFixed(2)}" preserveAspectRatio="xMidYMid meet" role="img"><defs>
