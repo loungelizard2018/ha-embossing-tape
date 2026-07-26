@@ -1,0 +1,11 @@
+{
+  "name": "ha-embossing-tape",
+  "version": "0.1.0",
+  "description": "Photorealistic vintage embossing tape card for Home Assistant dashboards",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "check": "node --check dist/embossing-tape-card.js && node --check dist/embossing-tape-card-core.js && node --check dist/embossing-tape-render.js && node --check dist/embossing-tape-utils.js"
+  },
+  "type": "module"
+}
