@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#202328"/><stop offset="1" stop-color="#070809"/></linearGradient>
+    <linearGradient id="tape" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#235ee0"/><stop offset=".55" stop-color="#1551d1"/><stop offset="1" stop-color="#082a82"/></linearGradient>
+    <radialGradient id="screw"><stop stop-color="#45484d"/><stop offset=".28" stop-color="#111315"/><stop offset="1" stop-color="#020303"/></radialGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-opacity=".7"/></filter>
+  </defs>
+  <rect width="1200" height="480" rx="28" fill="url(#bg)"/>
+  <g fill="url(#screw)" stroke="#555" stroke-opacity=".25">
+    <circle cx="58" cy="58" r="22"/><circle cx="1142" cy="58" r="22"/><circle cx="58" cy="422" r="22"/><circle cx="1142" cy="422" r="22"/>
+  </g>
+  <g stroke="#000" stroke-width="7" stroke-linecap="round">
+    <path d="M44 58h28M58 44v28M1128 58h28M1142 44v28M44 422h28M58 408v28M1128 422h28M1142 408v28"/>
+  </g>
+  <path d="M110 145 Q600 168 1090 145 L1100 160 L1096 330 Q600 356 104 330 L100 160 Z" fill="url(#tape)" stroke="#071a52" stroke-width="5" filter="url(#shadow)"/>
+  <path d="M120 175 Q600 190 1080 175" fill="none" stroke="#fff" stroke-opacity=".17" stroke-width="34" stroke-linecap="round"/>
+  <g font-family="Arial Narrow,Arial,sans-serif" font-size="86" letter-spacing="13" text-anchor="middle">
+    <text x="604" y="281" fill="#000" stroke="#000" stroke-width="8" opacity=".72">MUSIC IS LIFE</text>
+    <text x="596" y="273" fill="#edf5ff" stroke="#fff" stroke-width="2">MUSIC IS LIFE</text>
+  </g>
+</svg>
