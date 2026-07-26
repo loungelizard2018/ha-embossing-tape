@@ -1,0 +1,8 @@
+type: custom:embossing-tape-card
+text: MUSIC IS LIFE
+tape_color: "#1757d7"
+emboss_color: "#eaf4ff"
+curve: 4
+character_jitter: 1.4
+rotation_jitter: 1.7
+baseline_jitter: 1.2
