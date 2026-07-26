@@ -33,12 +33,12 @@ A photorealistic Home Assistant dashboard card inspired by vintage Dymo/Motex-st
 5. Install **Embossing Tape Card**.
 6. Reload Home Assistant and refresh the browser without cache.
 
-HACS installs `dist/embossing-tape-card.js` together with its adjacent ES modules and normally registers the dashboard resource automatically.
+HACS installs all JavaScript modules from `dist/` and registers `ha-embossing-tape.js` as the dashboard resource.
 
 ## Manual installation
 
-1. Copy the complete contents of `dist/` to `/config/www/embossing-tape-card/`.
-2. Add `/local/embossing-tape-card/embossing-tape-card.js` as a **JavaScript Module** under **Settings → Dashboards → Resources**.
+1. Copy the complete contents of `dist/` to `/config/www/ha-embossing-tape/`.
+2. Add `/local/ha-embossing-tape/ha-embossing-tape.js` as a **JavaScript Module** under **Settings → Dashboards → Resources**.
 3. Reload the browser without cache.
 
 ## Minimal entity example
