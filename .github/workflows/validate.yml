@@ -16,3 +16,11 @@ jobs:
         with:
           node-version: "22"
       - run: npm run check
+
+  hacs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hacs/action@main
+        with:
+          category: plugin
+          ignore: brands description topics
