@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="t" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#26292d"/><stop offset="1" stop-color="#070809"/></linearGradient>
+    <filter id="s"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-opacity=".55"/></filter>
+  </defs>
+  <rect x="14" y="64" width="228" height="128" rx="14" fill="url(#t)" filter="url(#s)"/>
+  <text x="128" y="148" text-anchor="middle" font-family="Arial Narrow,Arial,sans-serif" font-size="66" letter-spacing="10" fill="#eceeef" stroke="#fff" stroke-width="1">HA</text>
+  <text x="130" y="151" text-anchor="middle" font-family="Arial Narrow,Arial,sans-serif" font-size="66" letter-spacing="10" fill="none" stroke="#000" stroke-width="3" opacity=".7">HA</text>
+</svg>
