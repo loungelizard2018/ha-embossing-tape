@@ -1,11 +1,11 @@
 {
   "name": "ha-embossing-tape",
-  "version": "0.3.0",
-  "description": "Canvas-rendered photorealistic embossed tape card for Home Assistant dashboards",
+  "version": "0.4.0",
+  "description": "Photorealistic numeric embossing tape card using pre-rendered glyph assets",
   "license": "MIT",
   "private": false,
   "scripts": {
-    "check": "node --check dist/ha-embossing-tape.js && node --check dist/embossing-tape-card.js && node --check dist/embossing-tape-card-core.js && node --check dist/embossing-tape-render.js && node --check dist/embossing-tape-utils.js"
+    "check": "node --check dist/ha-embossing-tape.js && node --check dist/embossing-tape-card.js && node --check dist/embossing-tape-card-core.js && node --check dist/embossing-tape-render.js && node --check dist/embossing-tape-utils.js && node --check dist/embossing-tape-assets.js && node --check dist/assets/glyphs/black-classic/atlas-part0.js && node --check dist/assets/glyphs/black-classic/atlas-part1.js"
   },
   "type": "module"
 }
