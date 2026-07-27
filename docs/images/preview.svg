@@ -1,21 +1,96 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#202328"/><stop offset="1" stop-color="#070809"/></linearGradient>
-    <linearGradient id="tape" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#235ee0"/><stop offset=".55" stop-color="#1551d1"/><stop offset="1" stop-color="#082a82"/></linearGradient>
-    <radialGradient id="screw"><stop stop-color="#45484d"/><stop offset=".28" stop-color="#111315"/><stop offset="1" stop-color="#020303"/></radialGradient>
-    <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-opacity=".7"/></filter>
+    <radialGradient id="background" cx="50%" cy="42%" r="72%">
+      <stop offset="0" stop-color="#181a1d"/>
+      <stop offset="1" stop-color="#050607"/>
+    </radialGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#202225"/>
+      <stop offset=".18" stop-color="#121416"/>
+      <stop offset=".66" stop-color="#08090a"/>
+      <stop offset="1" stop-color="#020303"/>
+    </linearGradient>
+    <linearGradient id="tape" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#424448" stop-opacity=".32"/>
+      <stop offset=".07" stop-color="#111315"/>
+      <stop offset=".62" stop-color="#090a0b"/>
+      <stop offset=".9" stop-color="#020303"/>
+      <stop offset="1" stop-color="#000"/>
+    </linearGradient>
+    <linearGradient id="ridge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset=".25" stop-color="#edf0f2"/>
+      <stop offset=".5" stop-color="#aeb2b6"/>
+      <stop offset=".74" stop-color="#111315"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".7"/>
+    </linearGradient>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".7"/>
+      <stop offset=".45" stop-color="#d9dde0" stop-opacity=".22"/>
+      <stop offset=".8" stop-color="#000" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#e8ebee" stop-opacity=".3"/>
+    </linearGradient>
+    <radialGradient id="screw" cx="32%" cy="25%" r="82%">
+      <stop offset="0" stop-color="#666a6e" stop-opacity=".75"/>
+      <stop offset=".2" stop-color="#111315"/>
+      <stop offset=".7" stop-color="#020303"/>
+      <stop offset="1" stop-color="#24272a" stop-opacity=".45"/>
+    </radialGradient>
+    <filter id="panelShadow" x="-10%" y="-35%" width="120%" height="185%">
+      <feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#000" flood-opacity=".85"/>
+    </filter>
+    <filter id="tapeShadow" x="-10%" y="-35%" width="120%" height="190%">
+      <feDropShadow dx="0" dy="7" stdDeviation="5" flood-color="#000" flood-opacity=".95"/>
+    </filter>
+    <filter id="texture" x="-5%" y="-10%" width="110%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency=".08 .32" numOctaves="3" seed="1974" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0" result="mono"/>
+      <feComponentTransfer in="mono" result="grain"><feFuncA type="table" tableValues="0 .17"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" in2="grain" mode="soft-light"/>
+    </filter>
+    <filter id="softPressure" x="-12%" y="-30%" width="130%" height="165%">
+      <feGaussianBlur stdDeviation=".7"/>
+    </filter>
+    <filter id="relief" x="-12%" y="-30%" width="130%" height="170%">
+      <feDropShadow dx="1" dy="1.8" stdDeviation=".7" flood-color="#000" flood-opacity=".75"/>
+    </filter>
   </defs>
-  <rect width="1200" height="480" rx="28" fill="url(#bg)"/>
-  <g fill="url(#screw)" stroke="#555" stroke-opacity=".25">
-    <circle cx="58" cy="58" r="22"/><circle cx="1142" cy="58" r="22"/><circle cx="58" cy="422" r="22"/><circle cx="1142" cy="422" r="22"/>
+
+  <rect width="1200" height="300" rx="24" fill="url(#background)"/>
+
+  <g filter="url(#panelShadow)">
+    <rect x="34" y="63" width="1132" height="174" rx="21" fill="url(#panel)" stroke="#020303" stroke-width="3" filter="url(#texture)"/>
+    <rect x="37" y="66" width="1126" height="168" rx="18" fill="none" stroke="#fff" stroke-opacity=".11"/>
   </g>
-  <g stroke="#000" stroke-width="7" stroke-linecap="round">
-    <path d="M44 58h28M58 44v28M1128 58h28M1142 44v28M44 422h28M58 408v28M1128 422h28M1142 408v28"/>
+
+  <g filter="url(#tapeShadow)">
+    <rect x="104" y="88" width="992" height="124" rx="8" fill="url(#tape)" stroke="#010203" stroke-width="3" filter="url(#texture)"/>
+    <path d="M115 102 Q600 98 1085 102" fill="none" stroke="#fff" stroke-opacity=".13" stroke-width="10" stroke-linecap="round"/>
+    <path d="M112 197 Q600 204 1088 197" fill="none" stroke="#000" stroke-opacity=".58" stroke-width="9" stroke-linecap="round"/>
   </g>
-  <path d="M110 145 Q600 168 1090 145 L1100 160 L1096 330 Q600 356 104 330 L100 160 Z" fill="url(#tape)" stroke="#071a52" stroke-width="5" filter="url(#shadow)"/>
-  <path d="M120 175 Q600 190 1080 175" fill="none" stroke="#fff" stroke-opacity=".17" stroke-width="34" stroke-linecap="round"/>
-  <g font-family="Arial Narrow,Arial,sans-serif" font-size="86" letter-spacing="13" text-anchor="middle">
-    <text x="604" y="281" fill="#000" stroke="#000" stroke-width="8" opacity=".72">MUSIC IS LIFE</text>
-    <text x="596" y="273" fill="#edf5ff" stroke="#fff" stroke-width="2">MUSIC IS LIFE</text>
+
+  <g aria-hidden="true">
+    <g transform="translate(68 150) rotate(-18)">
+      <circle r="18" fill="#000" opacity=".6"/>
+      <circle r="15" fill="url(#screw)" stroke="#fff" stroke-opacity=".15"/>
+      <path d="M-8 0H8M0-8V8" stroke="#000" stroke-width="6" stroke-linecap="round"/>
+      <path d="M-8-.6H8M-.6-8V8" stroke="#fff" stroke-opacity=".17" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(1132 150) rotate(13)">
+      <circle r="18" fill="#000" opacity=".6"/>
+      <circle r="15" fill="url(#screw)" stroke="#fff" stroke-opacity=".15"/>
+      <path d="M-8 0H8M0-8V8" stroke="#000" stroke-width="6" stroke-linecap="round"/>
+      <path d="M-8-.6H8M-.6-8V8" stroke="#fff" stroke-opacity=".17" stroke-width="2" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <g font-family="Arial Narrow,Roboto Condensed,Arial,sans-serif" font-size="64" font-weight="300" letter-spacing="8" text-anchor="middle" stroke-linecap="round" stroke-linejoin="round" paint-order="stroke fill">
+    <text x="603" y="171" fill="none" stroke="#000" stroke-width="6" opacity=".75" filter="url(#softPressure)">22.1809954387132</text>
+    <text x="602" y="169" fill="none" stroke="#000" stroke-width="4.8" opacity=".96">22.1809954387132</text>
+    <text x="598" y="164" fill="none" stroke="#fff" stroke-width="4.1" opacity=".76">22.1809954387132</text>
+    <text x="600" y="167" fill="none" stroke="url(#ridge)" stroke-width="2" filter="url(#relief)">22.1809954387132</text>
+    <text x="600" y="167" fill="url(#face)" stroke="#e8ebee" stroke-width=".7" opacity=".18">22.1809954387132</text>
+    <text x="600.7" y="168" fill="none" stroke="#000" stroke-width=".8" opacity=".82">22.1809954387132</text>
+    <text x="599.4" y="166.2" fill="none" stroke="#fff" stroke-width=".55" opacity=".9">22.1809954387132</text>
   </g>
 </svg>
