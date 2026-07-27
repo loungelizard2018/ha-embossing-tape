@@ -5,24 +5,38 @@
   <img alt="Embossing Tape Card" src="brand/logo.svg" width="900">
 </picture>
 
-A photorealistic Home Assistant dashboard card inspired by vintage Dymo/Motex-style embossed plastic labels. Each character is rendered independently with small deterministic baseline, spacing, and rotation differences, so the result looks mechanically stamped rather than digitally typeset.
+A photorealistic Home Assistant dashboard card inspired by vintage Dymo/Motex-style embossed plastic labels. Version 0.2 replaces the previous flat text treatment with a deep-relief SVG renderer: each character is built from a compression halo, lower shadow, upper shoulder, metallic ridge, translucent face and specular highlight.
 
 ![Embossing Tape Card preview](docs/images/preview.svg)
+
+## Version 0.2 visual model
+
+The default appearance now matches a black industrial identification plate:
+
+- matte textured black mounting panel
+- inset black embossing tape
+- two dark cross-head screws at the ends
+- silver-white mechanically embossed characters
+- visible pressure deformation and lower-right depth shadow
+- upper-left reflected edge and narrow specular crest
+- small deterministic character misalignment
+
+All geometry and colours remain configurable. No raster image, external font, CDN or network dependency is required.
 
 ## Features
 
 - Dynamic text from an entity state or entity attribute
 - Static labels without an entity
-- Raised, bevelled characters with separate highlight, face, edge, and shadow layers
-- Small reproducible character misalignment instead of a perfectly digital baseline
-- Configurable tape, tape edge, embossed character, panel, and screw colours
-- Glossy, satin, or matte plastic surface
-- Optional curved tape
-- Optional black instrument panel and four cross-head screws
-- Prefix, suffix, decimal formatting, truncation, padding, and alignment
-- Responsive sizing with no horizontal card overflow
+- Deep-relief character construction rather than flat white text
+- Configurable emboss depth, ridge width, gloss and face opacity
+- Small reproducible baseline, spacing and rotation imperfections
+- Configurable tape, tape edge, emboss, panel and screw colours
+- Glossy, satin or matte plastic surface
+- Optional panel and optional two- or four-screw layouts
+- Prefix, suffix, decimal formatting, truncation, padding and alignment
+- Responsive scaling without horizontal overflow
 - Tap and hold actions
-- No external font, image, or CDN dependency
+- Modern Home Assistant grid sizing support
 
 ## Installation with HACS
 
@@ -35,34 +49,89 @@ A photorealistic Home Assistant dashboard card inspired by vintage Dymo/Motex-st
 
 HACS installs all JavaScript modules from `dist/` and registers `ha-embossing-tape.js` as the dashboard resource.
 
-## Manual installation
+## Updating from 0.1
 
-1. Copy the complete contents of `dist/` to `/config/www/ha-embossing-tape/`.
-2. Add `/local/ha-embossing-tape/ha-embossing-tape.js` as a **JavaScript Module** under **Settings → Dashboards → Resources**.
-3. Reload the browser without cache.
+Version 0.2 uses versioned ES-module imports to prevent the browser from retaining the old renderer. After updating in HACS:
 
-## Minimal entity example
+1. Reload Home Assistant.
+2. Perform a hard browser refresh.
+3. On the Home Assistant mobile app, close and reopen the app if the old appearance remains cached.
+
+## Minimal example — new default appearance
 
 ```yaml
 type: custom:embossing-tape-card
 entity: sensor.bigpool_cpu_temperature
+decimals: 1
 suffix: " C"
-decimals: 0
-tape_color: "#17191c"
-emboss_color: "#e7e8e9"
 ```
 
-## Static blue label
+The default configuration already activates the black panel, two end screws and deep silver-white embossing.
+
+## Exact industrial reference configuration
+
+```yaml
+type: custom:embossing-tape-card
+entity: sensor.bigpool_cpu_temperature
+decimals: 1
+suffix: " C"
+
+tape_color: "#0b0c0d"
+tape_edge_color: "#010203"
+tape_highlight_color: "#ffffff"
+emboss_color: "#e8ebee"
+emboss_highlight_color: "#ffffff"
+emboss_shadow_color: "#000000"
+surface: satin
+
+mount: panel
+mount_color: "#111315"
+mount_edge_color: "#030405"
+mount_radius: 18
+frame_padding_x: 48
+frame_padding_y: 18
+
+screws: true
+screw_layout: ends
+screw_color: "#090a0b"
+screw_size: 23
+screw_inset: 10
+
+font_size: 45
+font_weight: 300
+letter_spacing: 7
+emboss_depth: 3.2
+emboss_ridge: 1.65
+emboss_gloss: 0.95
+emboss_face_opacity: 0.16
+pressure_halo: 0.8
+
+character_jitter: 1.15
+rotation_jitter: 1.25
+baseline_jitter: 1.05
+spacing_jitter: 0.75
+curve: 1.5
+seed: 1974
+max_width: 900
+```
+
+The same configuration is stored in [`examples/industrial-deep-relief.yaml`](examples/industrial-deep-relief.yaml).
+
+## Static coloured tape
 
 ```yaml
 type: custom:embossing-tape-card
 text: MUSIC IS LIFE
 tape_color: "#1757d7"
+tape_edge_color: "#082a82"
 emboss_color: "#eaf4ff"
-curve: 4
+mount: none
+screws: false
+surface: glossy
+curve: 3
 ```
 
-## Panel-mounted version with screws
+## Four-screw instrument panel
 
 ```yaml
 type: custom:embossing-tape-card
@@ -70,11 +139,9 @@ entity: input_text.house_mode
 prefix: "MODE "
 pad_to: 18
 align: center
-tape_color: "#101214"
-emboss_color: "#f1f2f3"
-surface: satin
 mount: panel
 screws: true
+screw_layout: corners
 show_name: true
 name: HOUSE MODE
 ```
@@ -85,14 +152,16 @@ name: HOUSE MODE
 2. `entity` attribute selected by `attribute`
 3. `entity` state
 
-`text` allows a purely decorative or static label. For dynamic labels, omit `text` and configure `entity`.
+`text` creates a purely decorative or static label. For dynamic labels, omit `text` and configure `entity`.
 
 ## Configuration reference
+
+### Content
 
 | Option | Default | Purpose |
 |---|---:|---|
 | `entity` | none | Home Assistant entity used as the dynamic source |
-| `attribute` | none | Read a specific entity attribute instead of the state |
+| `attribute` | none | Read an entity attribute instead of the state |
 | `text` | none | Static text; takes precedence over `entity` |
 | `prefix`, `suffix` | empty | Text added before or after the source value |
 | `unavailable_text` | `UNAVAILABLE` | Replacement for missing or unavailable states |
@@ -102,45 +171,79 @@ name: HOUSE MODE
 | `max_length` | `32` | Maximum displayed character count |
 | `pad_to` | `0` | Pad the label to a fixed character count |
 | `pad_character` | space | Character used for padding |
-| `align` | `center` | Padding and text alignment: `left`, `center`, or `right` |
-| `tape_color` | `#17191c` | Main plastic tape colour |
-| `tape_edge_color` | `#050607` | Dark cut edge colour |
-| `emboss_color` | `#e7e8e9` | Raised character colour |
-| `surface` | `glossy` | `glossy`, `satin`, or `matte` |
-| `tape_height` | `92` | Tape height in the internal SVG coordinate system |
-| `tape_padding` | `28` | Horizontal space around the text |
+| `align` | `center` | `left`, `center` or `right` |
+
+### Tape and colour
+
+| Option | Default | Purpose |
+|---|---:|---|
+| `tape_color` | `#0b0c0d` | Main plastic tape colour |
+| `tape_edge_color` | `#010203` | Dark cut edge and lower edge colour |
+| `tape_highlight_color` | `#ffffff` | Reflected upper edge colour |
+| `emboss_color` | `#e8ebee` | Main embossed material colour |
+| `emboss_highlight_color` | `#ffffff` | Upper-left ridge highlight |
+| `emboss_shadow_color` | `#000000` | Lower-right depth and pressure shadow |
+| `surface` | `satin` | `glossy`, `satin` or `matte` |
+| `tape_height` | `92` | Tape height in SVG units |
+| `tape_padding` | `30` | Horizontal space around the text |
+| `tape_radius` | `7` | Tape corner radius |
 | `min_tape_width` | `220` | Minimum tape width |
-| `max_width` | `720` | Maximum rendered card width in pixels |
-| `font_size` | `44` | Character size |
-| `font_family` | narrow system stack | Local font stack; no network font is loaded |
-| `letter_spacing` | `7` | Nominal spacing between characters |
-| `character_jitter` | `1.2` | Horizontal character displacement |
-| `rotation_jitter` | `1.4` | Maximum random character rotation in degrees |
-| `baseline_jitter` | `1.1` | Vertical character displacement |
-| `spacing_jitter` | `0.8` | Additional irregular character spacing |
-| `seed` | `1974` | Makes the imperfections deterministic and repeatable |
-| `curve` | `3` | Tape and text curvature; `0` is straight |
-| `end_slant` | `5` | Slant of the cut tape ends |
-| `mount` | `none` | `none` or black instrument-style `panel` |
-| `mount_color` | `#111315` | Panel colour |
+| `max_width` | `900` | Maximum rendered width in pixels |
+| `curve` | `1.5` | Slight mechanical bow; `0` is straight |
+| `end_slant` | `1.5` | Cut-end asymmetry |
+
+### Embossed characters
+
+| Option | Default | Purpose |
+|---|---:|---|
+| `font_size` | `45` | Character size |
+| `font_family` | narrow system stack | Local condensed font stack |
+| `font_weight` | `300` | Character skeleton weight |
+| `letter_spacing` | `7` | Nominal character spacing |
+| `emboss_depth` | `3.2` | Offset between highlight and depth shadow |
+| `emboss_ridge` | `1.65` | Width of the bright embossed crest |
+| `emboss_gloss` | `0.95` | Specular response of the raised face |
+| `emboss_face_opacity` | `0.16` | Translucent central face intensity |
+| `pressure_halo` | `0.8` | Dark plastic compression around each stamp |
+| `character_jitter` | `1.15` | Horizontal character displacement |
+| `rotation_jitter` | `1.25` | Maximum character rotation in degrees |
+| `baseline_jitter` | `1.05` | Vertical character displacement |
+| `spacing_jitter` | `0.75` | Additional irregular spacing |
+| `seed` | `1974` | Repeatable imperfection pattern |
+
+### Panel and screws
+
+| Option | Default | Purpose |
+|---|---:|---|
+| `mount` | `panel` | `panel` or `none` |
+| `mount_color` | `#111315` | Main panel colour |
+| `mount_edge_color` | `#030405` | Panel edge colour |
 | `mount_radius` | `18` | Panel corner radius |
-| `frame_padding` | `30` | Space between tape and panel edge |
-| `screws` | `false` | Show four black cross-head screws |
-| `screw_color` | `#0a0b0c` | Screw face colour |
-| `screw_size` | `24` | Screw diameter |
-| `screw_inset` | `12` | Screw offset from the outer edge |
+| `frame_padding_x` | `48` | Horizontal space between tape and panel edge |
+| `frame_padding_y` | `18` | Vertical space between tape and panel edge |
+| `frame_padding` | `30` | Compatibility fallback for old configurations |
+| `screws` | `true` | Show mounting screws |
+| `screw_layout` | `ends` | `ends` for two screws or `corners` for four |
+| `screw_color` | `#090a0b` | Screw face colour |
+| `screw_size` | `23` | Screw diameter |
+| `screw_inset` | `10` | Screw offset from the panel edge |
 | `screw_rotation` | `-18` | Base cross-head rotation |
-| `show_name` | `false` | Show a caption below the label |
+
+### Caption and interaction
+
+| Option | Default | Purpose |
+|---|---:|---|
+| `show_name` | `false` | Show a caption below the plate |
 | `name` | entity name | Caption override |
 | `name_color` | theme text | Caption colour |
 | `name_size` | `14` | Caption size |
-| `animate` | `true` | Brief mechanical press animation when text changes |
-| `tap_action` | `more-info` | Action on click/tap |
-| `hold_action` | `none` | Action on context-menu/hold |
+| `animate` | `true` | Mechanical press animation when text changes |
+| `tap_action` | `more-info` | Action on click or tap |
+| `hold_action` | `none` | Action on hold or context menu |
 
 ## Actions
 
-Supported actions are:
+Supported actions:
 
 - `more-info`
 - `navigate` with `navigation_path`
@@ -149,33 +252,6 @@ Supported actions are:
 - `call-service` with `service` and `service_data`
 - `perform-action` with `perform_action` and `data`
 - `none`
-
-Example:
-
-```yaml
-tap_action:
-  action: navigate
-  navigation_path: /lovelace/system
-hold_action:
-  action: call-service
-  service: input_text.set_value
-  service_data:
-    entity_id: input_text.house_mode
-    value: MANUAL
-```
-
-## Reproducible mechanical imperfections
-
-The random-looking character placement is deterministic. The same `seed` and the same text always produce the same stamping pattern. Change `seed` to generate another mechanical arrangement without unstable movement on every Home Assistant update.
-
-Recommended realistic ranges:
-
-```yaml
-character_jitter: 0.6   # 0.4–2.0
-rotation_jitter: 1.2    # 0.5–2.5 degrees
-baseline_jitter: 0.9    # 0.4–1.8
-spacing_jitter: 0.6     # 0.2–1.4
-```
 
 ## Development check
 
