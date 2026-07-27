@@ -1,27 +1,30 @@
 # Changelog
 
+## 0.3.0 — 2026-07-27
+
+- Removed the SVG multi-stroke character renderer that produced a chrome-outline or extruded-font appearance.
+- Rebuilt the visual engine around a responsive high-resolution Canvas renderer.
+- Every glyph is converted to a height field and shaded from a virtual upper-left light source.
+- Added physically derived relief normals, diffuse shading, specular highlights, pressure deformation and lower-right contact shadowing.
+- Character interiors now remain dark and translucent while the compressed ridges become silver-white, matching real black embossing tape.
+- Added deterministic micro-irregularity and fine material grain without the former horizontal wood-grain effect.
+- Added `glyph_scale_x` for a consistently narrow mechanical embossing-wheel appearance independent of the local browser font.
+- Reduced the default rotation and baseline variation to realistic mechanical tolerances.
+- Reworked the black panel, inset tape and two end screws to match the approved industrial reference proportions.
+- Added high-DPI rendering and automatic redraw through `ResizeObserver` for sharp desktop, tablet and mobile output.
+- Retained dynamic entity states, attributes, static text, colours, actions, alternate screw layouts and HACS installation.
+- Versioned every ES-module import with `0.3.0` to invalidate cached 0.2 renderer modules.
+
 ## 0.2.0 — 2026-07-27
 
-- Rebuilt the character renderer as a deep-relief physical embossing model.
-- Replaced flat white character faces with compression halo, lower depth shadow, upper shoulder, metallic crest, translucent face and specular glint layers.
-- Added configurable `emboss_depth`, `emboss_ridge`, `emboss_gloss`, `emboss_face_opacity` and `pressure_halo` controls.
-- Added separate emboss highlight and shadow colours for reliable relief on arbitrary tape colours.
-- Reworked the default card to match the black industrial reference appearance.
-- Changed the default mount to a textured black panel with two end screws.
-- Added `screw_layout: ends|corners`.
-- Added independent `frame_padding_x` and `frame_padding_y` controls while retaining `frame_padding` compatibility.
-- Added configurable tape and panel edge/highlight colours and tape corner radius.
-- Added Home Assistant grid sizing support.
-- Added versioned ES-module imports to prevent stale 0.1 renderer modules from remaining in browser cache.
-- Added a complete exact-reference YAML example and updated documentation.
+- Introduced a layered SVG deep-relief renderer.
+- Added configurable emboss depth, ridge, gloss, face opacity and pressure halo controls.
+- Added separate emboss highlight and shadow colours.
+- Added black panel defaults, two end screws and Home Assistant grid sizing.
 
 ## 0.1.0 — 2026-07-27
 
 - Initial HACS-installable release.
-- Dynamic entity state, entity attribute, or static text source.
-- Deterministic per-character baseline, spacing, and rotation imperfections.
-- Initial raised lettering, tape texture and configurable colours.
-- Glossy, satin and matte tape surfaces.
-- Optional black instrument panel and four cross-head screws.
-- Responsive sizing and overflow protection.
-- Tap and hold actions.
+- Dynamic entity state, entity attribute or static text source.
+- Deterministic per-character baseline, spacing and rotation differences.
+- Configurable tape, lettering, panel and screw colours.
