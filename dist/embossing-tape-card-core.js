@@ -1,5 +1,5 @@
-import { DEFAULTS, displayText, validate } from "./embossing-tape-utils.js?v=0.2.0";
-import { renderMarkup } from "./embossing-tape-render.js?v=0.2.0";
+import { DEFAULTS, displayText, validate } from "./embossing-tape-utils.js?v=0.3.0";
+import { drawEmbossingTape, renderMarkup } from "./embossing-tape-render.js?v=0.3.0";
 
 export class EmbossingTapeCard extends HTMLElement {
   constructor() {
@@ -8,6 +8,12 @@ export class EmbossingTapeCard extends HTMLElement {
     this._config = null;
     this._hass = null;
     this._lastText = null;
+    this._resizeObserver = null;
+  }
+
+  disconnectedCallback() {
+    this._resizeObserver?.disconnect();
+    this._resizeObserver = null;
   }
 
   static getStubConfig() {
@@ -15,15 +21,16 @@ export class EmbossingTapeCard extends HTMLElement {
       type: "custom:embossing-tape-card",
       text: "MUSIC IS LIFE",
       tape_color: "#0b0c0d",
-      emboss_color: "#e8ebee",
+      emboss_color: "#eef0f2",
       surface: "satin",
       mount: "panel",
       screws: true,
       screw_layout: "ends",
-      character_jitter: 1.15,
-      rotation_jitter: 1.25,
-      baseline_jitter: 1.05,
-      curve: 1.5
+      glyph_scale_x: 0.76,
+      character_jitter: 1,
+      rotation_jitter: 0.75,
+      baseline_jitter: 0.9,
+      curve: 1.2
     };
   }
 
@@ -69,16 +76,37 @@ export class EmbossingTapeCard extends HTMLElement {
     const cfg = this._config;
     const state = this._state();
     const text = displayText(cfg, state);
-    const changed = this._lastText !== null && this._lastText !== text;
     this._lastText = text;
 
     const name = cfg.name || state?.attributes?.friendly_name || cfg.entity || "Embossing tape";
     const active = this._actionName(cfg.tap_action) !== "none"
       || this._actionName(cfg.hold_action) !== "none";
 
-    this.shadowRoot.innerHTML = renderMarkup(cfg, text, name, changed, active);
-
+    this.shadowRoot.innerHTML = renderMarkup(cfg, text, name, active);
+    const canvas = this.shadowRoot.querySelector(".emboss-canvas");
     const card = this.shadowRoot.querySelector(".card");
+    drawEmbossingTape(canvas, cfg, text);
+    document.fonts?.ready.then(() => {
+      if (this.isConnected && canvas === this.shadowRoot.querySelector(".emboss-canvas")) {
+        drawEmbossingTape(canvas, cfg, text);
+      }
+    });
+    this._resizeObserver?.disconnect();
+    if (typeof ResizeObserver !== "undefined" && card) {
+      let previousWidth = card.getBoundingClientRect().width;
+      this._resizeObserver = new ResizeObserver((entries) => {
+        const width = entries[0]?.contentRect?.width || 0;
+        if (Math.abs(width - previousWidth) < 1) return;
+        previousWidth = width;
+        requestAnimationFrame(() => {
+          if (this.isConnected && canvas === this.shadowRoot.querySelector(".emboss-canvas")) {
+            drawEmbossingTape(canvas, cfg, text);
+          }
+        });
+      });
+      this._resizeObserver.observe(card);
+    }
+
     card?.addEventListener("click", (event) => this._act("tap", event));
     card?.addEventListener("contextmenu", (event) => {
       event.preventDefault();
