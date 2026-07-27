@@ -1,83 +1,71 @@
+import { SUPPORTED_CHARACTERS } from "./embossing-tape-assets.js?v=0.4.0";
+
 export const DEFAULTS = {
   entity: null,
   attribute: null,
   text: undefined,
   prefix: "",
   suffix: "",
-  unavailable_text: "UNAVAILABLE",
-  uppercase: true,
-  lowercase: false,
+  unavailable_text: "--",
   decimals: null,
   max_length: 32,
   pad_to: 0,
   pad_character: " ",
   align: "center",
+  invalid_character: "error",
 
-  tape_color: "#0b0c0d",
-  tape_edge_color: "#010203",
-  tape_highlight_color: "#ffffff",
-  emboss_color: "#eef0f2",
-  emboss_highlight_color: "#ffffff",
-  emboss_shadow_color: "#000000",
-  surface: "satin",
-  tape_height: 96,
-  tape_padding: 34,
-  tape_radius: 7,
-  min_tape_width: 240,
-  max_width: 900,
-
-  font_size: 58,
-  font_family: "Roboto, Helvetica Neue, Arial, sans-serif",
-  font_weight: 300,
-  glyph_scale_x: 0.76,
-  letter_spacing: 10,
-  character_jitter: 1.0,
-  rotation_jitter: 0.75,
-  baseline_jitter: 0.9,
-  spacing_jitter: 0.65,
+  render_mode: "numeric_assets",
+  asset_theme: "black_classic",
+  glyph_height: 88,
+  glyph_gap: 8,
+  space_width: 38,
+  character_jitter: 0.8,
+  rotation_jitter: 0.45,
+  baseline_jitter: 0.65,
+  spacing_jitter: 0.5,
   seed: 1974,
-  curve: 1.2,
-  end_slant: 1.2,
+  curve: 0.8,
 
-  emboss_depth: 1.15,
-  emboss_ridge: 1.4,
-  emboss_gloss: 0.55,
-  emboss_face_opacity: 0.22,
-  pressure_halo: 0.45,
+  tape_color: "#060809",
+  tape_edge_color: "#010203",
+  tape_highlight_color: "#363b40",
+  tape_height: 130,
+  tape_padding: 34,
+  tape_radius: 10,
+  min_tape_width: 260,
+  max_width: 900,
 
   mount: "panel",
   mount_color: "#111315",
   mount_edge_color: "#030405",
-  mount_radius: 20,
+  mount_radius: 24,
   frame_padding: 30,
-  frame_padding_x: 54,
-  frame_padding_y: 22,
+  frame_padding_x: 58,
+  frame_padding_y: 26,
 
   screws: true,
   screw_layout: "ends",
   screw_color: "#090a0b",
-  screw_size: 24,
-  screw_inset: 10,
+  screw_size: 25,
+  screw_inset: 11,
   screw_rotation: -18,
 
   show_name: false,
   name: null,
   name_color: "var(--primary-text-color)",
   name_size: 14,
-  animate: true,
   tap_action: { action: "more-info" },
   hold_action: { action: "none" }
 };
 
 export function validate(cfg) {
   const numeric = [
-    "max_length", "pad_to", "tape_height", "tape_padding", "tape_radius",
-    "min_tape_width", "max_width", "font_size", "font_weight", "glyph_scale_x",
-    "letter_spacing", "character_jitter", "rotation_jitter", "baseline_jitter",
-    "spacing_jitter", "seed", "curve", "end_slant", "emboss_depth",
-    "emboss_ridge", "emboss_gloss", "emboss_face_opacity", "pressure_halo",
-    "frame_padding", "frame_padding_x", "frame_padding_y", "mount_radius",
-    "screw_size", "screw_inset", "screw_rotation", "name_size"
+    "max_length", "pad_to", "glyph_height", "glyph_gap", "space_width",
+    "character_jitter", "rotation_jitter", "baseline_jitter", "spacing_jitter",
+    "seed", "curve", "tape_height", "tape_padding", "tape_radius",
+    "min_tape_width", "max_width", "frame_padding", "frame_padding_x",
+    "frame_padding_y", "mount_radius", "screw_size", "screw_inset",
+    "screw_rotation", "name_size"
   ];
 
   for (const key of numeric) {
@@ -86,17 +74,17 @@ export function validate(cfg) {
     }
   }
 
-  if (Number(cfg.tape_height) < 44) {
-    throw new Error("embossing-tape-card: 'tape_height' must be at least 44");
+  if (String(cfg.render_mode) !== "numeric_assets") {
+    throw new Error("embossing-tape-card 0.4 supports only render_mode: numeric_assets");
   }
-  if (Number(cfg.font_size) < 12) {
-    throw new Error("embossing-tape-card: 'font_size' must be at least 12");
+  if (String(cfg.asset_theme) !== "black_classic") {
+    throw new Error("embossing-tape-card 0.4 currently supports only asset_theme: black_classic");
   }
-  if (Number(cfg.glyph_scale_x) <= 0) {
-    throw new Error("embossing-tape-card: 'glyph_scale_x' must be greater than 0");
+  if (Number(cfg.glyph_height) < 24) {
+    throw new Error("embossing-tape-card: 'glyph_height' must be at least 24");
   }
-  if (Number(cfg.emboss_depth) < 0 || Number(cfg.emboss_ridge) <= 0) {
-    throw new Error("embossing-tape-card: emboss_depth must be >= 0 and emboss_ridge must be > 0");
+  if (Number(cfg.tape_height) < Number(cfg.glyph_height) + 24) {
+    throw new Error("embossing-tape-card: 'tape_height' must exceed 'glyph_height' by at least 24");
   }
   if (!["left", "center", "right"].includes(String(cfg.align).toLowerCase())) {
     throw new Error("embossing-tape-card: 'align' must be left, center, or right");
@@ -104,11 +92,27 @@ export function validate(cfg) {
   if (!["none", "panel"].includes(String(cfg.mount).toLowerCase())) {
     throw new Error("embossing-tape-card: 'mount' must be none or panel");
   }
-  if (!["glossy", "satin", "matte"].includes(String(cfg.surface).toLowerCase())) {
-    throw new Error("embossing-tape-card: 'surface' must be glossy, satin, or matte");
-  }
   if (!["ends", "corners"].includes(String(cfg.screw_layout).toLowerCase())) {
     throw new Error("embossing-tape-card: 'screw_layout' must be ends or corners");
+  }
+  if (!["error", "space"].includes(String(cfg.invalid_character).toLowerCase())) {
+    throw new Error("embossing-tape-card: 'invalid_character' must be error or space");
+  }
+
+  validateStaticCharacters(cfg.prefix, "prefix", cfg);
+  validateStaticCharacters(cfg.suffix, "suffix", cfg);
+  validateStaticCharacters(cfg.unavailable_text, "unavailable_text", cfg);
+  validateStaticCharacters(cfg.pad_character, "pad_character", cfg);
+  if (cfg.text !== undefined && cfg.text !== null) validateStaticCharacters(cfg.text, "text", cfg);
+}
+
+function validateStaticCharacters(value, field, cfg) {
+  const invalid = [...String(value ?? "")].filter((character) => !SUPPORTED_CHARACTERS.includes(character));
+  if (invalid.length && String(cfg.invalid_character).toLowerCase() === "error") {
+    throw new Error(
+      `embossing-tape-card: '${field}' contains unsupported character(s): ${[...new Set(invalid)].join(" ")}. `
+      + `Allowed: ${SUPPORTED_CHARACTERS}`
+    );
   }
 }
 
@@ -152,16 +156,27 @@ export function displayText(cfg, stateObj) {
   }
 
   if (typeof value === "object") value = JSON.stringify(value);
-
   let text = `${cfg.prefix ?? ""}${value ?? ""}${cfg.suffix ?? ""}`;
-  if (cfg.uppercase) text = text.toUpperCase();
-  else if (cfg.lowercase) text = text.toLowerCase();
+
+  const invalidMode = String(cfg.invalid_character).toLowerCase();
+  const invalid = [...text].filter((character) => !SUPPORTED_CHARACTERS.includes(character));
+  if (invalid.length) {
+    if (invalidMode === "error") {
+      throw new Error(
+        `embossing-tape-card: rendered value contains unsupported character(s): ${[...new Set(invalid)].join(" ")}. `
+        + `Allowed: ${SUPPORTED_CHARACTERS}`
+      );
+    }
+    text = [...text].map((character) => SUPPORTED_CHARACTERS.includes(character) ? character : " ").join("");
+  }
 
   const max = Math.max(1, Math.floor(Number(cfg.max_length)));
   text = text.slice(0, max);
 
   const target = Math.max(0, Math.min(max, Math.floor(Number(cfg.pad_to))));
-  const pad = String(cfg.pad_character ?? " ").slice(0, 1) || " ";
+  const pad = SUPPORTED_CHARACTERS.includes(String(cfg.pad_character ?? " ").slice(0, 1))
+    ? String(cfg.pad_character ?? " ").slice(0, 1)
+    : " ";
   if (text.length < target) {
     const amount = target - text.length;
     const align = String(cfg.align).toLowerCase();
@@ -174,14 +189,4 @@ export function displayText(cfg, stateObj) {
   }
 
   return text || " ";
-}
-
-export function surfaceSettings(name) {
-  if (name === "matte") {
-    return { glare: 0.045, noise: 0.085, specular: 0.26, roughness: 0.78 };
-  }
-  if (name === "glossy") {
-    return { glare: 0.2, noise: 0.045, specular: 0.82, roughness: 0.26 };
-  }
-  return { glare: 0.11, noise: 0.06, specular: 0.5, roughness: 0.48 };
 }
