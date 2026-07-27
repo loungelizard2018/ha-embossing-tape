@@ -1,0 +1,42 @@
+type: custom:embossing-tape-card
+entity: sensor.bigpool_cpu_temperature
+decimals: 1
+suffix: " C"
+
+# Exact V0.2 industrial appearance
+tape_color: "#0b0c0d"
+tape_edge_color: "#010203"
+emboss_color: "#e8ebee"
+emboss_highlight_color: "#ffffff"
+emboss_shadow_color: "#000000"
+surface: satin
+
+mount: panel
+mount_color: "#111315"
+mount_edge_color: "#030405"
+mount_radius: 18
+frame_padding_x: 48
+frame_padding_y: 18
+
+screws: true
+screw_layout: ends
+screw_color: "#090a0b"
+screw_size: 23
+screw_inset: 10
+
+font_size: 45
+font_weight: 300
+letter_spacing: 7
+emboss_depth: 3.2
+emboss_ridge: 1.65
+emboss_gloss: 0.95
+emboss_face_opacity: 0.16
+pressure_halo: 0.8
+
+character_jitter: 1.15
+rotation_jitter: 1.25
+baseline_jitter: 1.05
+spacing_jitter: 0.75
+curve: 1.5
+seed: 1974
+max_width: 900
