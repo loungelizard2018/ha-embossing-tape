@@ -5,38 +5,24 @@
   <img alt="Embossing Tape Card" src="brand/logo.svg" width="900">
 </picture>
 
-A photorealistic Home Assistant dashboard card inspired by vintage Dymo/Motex-style embossed plastic labels. Version 0.2 replaces the previous flat text treatment with a deep-relief SVG renderer: each character is built from a compression halo, lower shadow, upper shoulder, metallic ridge, translucent face and specular highlight.
+A Home Assistant Lovelace card inspired by vintage Dymo/Motex embossing tape. Version 0.3 uses a Canvas height-field renderer rather than stacked SVG text strokes: every character is treated as a physical relief surface, lit from the upper left and pressed into textured plastic.
 
 ![Embossing Tape Card preview](docs/images/preview.svg)
 
-## Version 0.2 visual model
+## Version 0.3 visual model
 
-The default appearance now matches a black industrial identification plate:
+The default card is the approved black industrial reference:
 
-- matte textured black mounting panel
-- inset black embossing tape
-- two dark cross-head screws at the ends
-- silver-white mechanically embossed characters
-- visible pressure deformation and lower-right depth shadow
-- upper-left reflected edge and narrow specular crest
-- small deterministic character misalignment
+- textured matte-black mounting plate
+- inset black plastic embossing tape
+- two black cross-head screws at the ends
+- narrow mechanically stamped characters
+- dark character centres with silver-white compressed ridges
+- upper-left shoulder highlight and lower-right contact shadow
+- slight deterministic baseline, spacing and rotation imperfections
+- no flat white fill and no exaggerated chrome extrusion
 
-All geometry and colours remain configurable. No raster image, external font, CDN or network dependency is required.
-
-## Features
-
-- Dynamic text from an entity state or entity attribute
-- Static labels without an entity
-- Deep-relief character construction rather than flat white text
-- Configurable emboss depth, ridge width, gloss and face opacity
-- Small reproducible baseline, spacing and rotation imperfections
-- Configurable tape, tape edge, emboss, panel and screw colours
-- Glossy, satin or matte plastic surface
-- Optional panel and optional two- or four-screw layouts
-- Prefix, suffix, decimal formatting, truncation, padding and alignment
-- Responsive scaling without horizontal overflow
-- Tap and hold actions
-- Modern Home Assistant grid sizing support
+The relief is generated dynamically for the current entity value. No image service, external font, CDN or fixed pre-rendered text is required.
 
 ## Installation with HACS
 
@@ -44,20 +30,14 @@ All geometry and colours remain configurable. No raster image, external font, CD
 2. Open the three-dot menu and select **Custom repositories**.
 3. Add `https://github.com/loungelizard2018/ha-embossing-tape`.
 4. Select category **Dashboard**.
-5. Install **Embossing Tape Card**.
+5. Install or update **Embossing Tape Card**.
 6. Reload Home Assistant and refresh the browser without cache.
 
-HACS installs all JavaScript modules from `dist/` and registers `ha-embossing-tape.js` as the dashboard resource.
+HACS registers `ha-embossing-tape.js` as the dashboard resource.
 
-## Updating from 0.1
+## Minimal entity example
 
-Version 0.2 uses versioned ES-module imports to prevent the browser from retaining the old renderer. After updating in HACS:
-
-1. Reload Home Assistant.
-2. Perform a hard browser refresh.
-3. On the Home Assistant mobile app, close and reopen the app if the old appearance remains cached.
-
-## Minimal example — new default appearance
+The reference appearance is now the default:
 
 ```yaml
 type: custom:embossing-tape-card
@@ -66,9 +46,16 @@ decimals: 1
 suffix: " C"
 ```
 
-The default configuration already activates the black panel, two end screws and deep silver-white embossing.
+## Static label
 
-## Exact industrial reference configuration
+```yaml
+type: custom:embossing-tape-card
+text: MUSIC IS LIFE
+```
+
+## Exact reference configuration
+
+The complete documented configuration is stored in [`examples/industrial-deep-relief.yaml`](examples/industrial-deep-relief.yaml).
 
 ```yaml
 type: custom:embossing-tape-card
@@ -78,8 +65,7 @@ suffix: " C"
 
 tape_color: "#0b0c0d"
 tape_edge_color: "#010203"
-tape_highlight_color: "#ffffff"
-emboss_color: "#e8ebee"
+emboss_color: "#eef0f2"
 emboss_highlight_color: "#ffffff"
 emboss_shadow_color: "#000000"
 surface: satin
@@ -87,171 +73,125 @@ surface: satin
 mount: panel
 mount_color: "#111315"
 mount_edge_color: "#030405"
-mount_radius: 18
-frame_padding_x: 48
-frame_padding_y: 18
-
 screws: true
 screw_layout: ends
-screw_color: "#090a0b"
-screw_size: 23
-screw_inset: 10
 
-font_size: 45
+font_size: 58
 font_weight: 300
-letter_spacing: 7
-emboss_depth: 3.2
-emboss_ridge: 1.65
-emboss_gloss: 0.95
-emboss_face_opacity: 0.16
-pressure_halo: 0.8
+glyph_scale_x: 0.76
+letter_spacing: 10
 
-character_jitter: 1.15
-rotation_jitter: 1.25
-baseline_jitter: 1.05
-spacing_jitter: 0.75
-curve: 1.5
+emboss_depth: 1.15
+emboss_ridge: 1.4
+emboss_gloss: 0.55
+emboss_face_opacity: 0.22
+pressure_halo: 0.45
+
+character_jitter: 1.0
+rotation_jitter: 0.75
+baseline_jitter: 0.9
+spacing_jitter: 0.65
 seed: 1974
-max_width: 900
 ```
 
-The same configuration is stored in [`examples/industrial-deep-relief.yaml`](examples/industrial-deep-relief.yaml).
+## Colours
 
-## Static coloured tape
+Tape and relief colours are independent:
 
 ```yaml
-type: custom:embossing-tape-card
-text: MUSIC IS LIFE
 tape_color: "#1757d7"
 tape_edge_color: "#082a82"
-emboss_color: "#eaf4ff"
-mount: none
-screws: false
-surface: glossy
-curve: 3
+emboss_color: "#eef6ff"
+emboss_highlight_color: "#ffffff"
+emboss_shadow_color: "#031026"
 ```
 
-## Four-screw instrument panel
-
-```yaml
-type: custom:embossing-tape-card
-entity: input_text.house_mode
-prefix: "MODE "
-pad_to: 18
-align: center
-mount: panel
-screws: true
-screw_layout: corners
-show_name: true
-name: HOUSE MODE
-```
+The Canvas renderer derives shading from these colours, so the relief remains visible on black, blue, red, yellow or other tape colours.
 
 ## Text source precedence
 
 1. `text`, when configured
-2. `entity` attribute selected by `attribute`
-3. `entity` state
+2. the entity attribute selected by `attribute`
+3. the entity state
 
-`text` creates a purely decorative or static label. For dynamic labels, omit `text` and configure `entity`.
+Numeric states can be formatted with `decimals`; `prefix`, `suffix`, `max_length`, `pad_to`, `pad_character` and `align` control the final tape text.
 
-## Configuration reference
-
-### Content
+## Main configuration options
 
 | Option | Default | Purpose |
 |---|---:|---|
-| `entity` | none | Home Assistant entity used as the dynamic source |
-| `attribute` | none | Read an entity attribute instead of the state |
-| `text` | none | Static text; takes precedence over `entity` |
-| `prefix`, `suffix` | empty | Text added before or after the source value |
-| `unavailable_text` | `UNAVAILABLE` | Replacement for missing or unavailable states |
-| `uppercase` | `true` | Convert the final label to uppercase |
-| `lowercase` | `false` | Convert to lowercase when uppercase is disabled |
-| `decimals` | none | Format numeric states with a fixed number of decimals |
-| `max_length` | `32` | Maximum displayed character count |
-| `pad_to` | `0` | Pad the label to a fixed character count |
-| `pad_character` | space | Character used for padding |
+| `entity` | none | Dynamic Home Assistant source |
+| `attribute` | none | Read an entity attribute instead of its state |
+| `text` | none | Static text, taking precedence over `entity` |
+| `decimals` | none | Fixed decimal places for numeric states |
+| `prefix`, `suffix` | empty | Text before or after the source value |
+| `max_length` | `32` | Maximum character count |
 | `align` | `center` | `left`, `center` or `right` |
-
-### Tape and colour
-
-| Option | Default | Purpose |
-|---|---:|---|
-| `tape_color` | `#0b0c0d` | Main plastic tape colour |
-| `tape_edge_color` | `#010203` | Dark cut edge and lower edge colour |
-| `tape_highlight_color` | `#ffffff` | Reflected upper edge colour |
-| `emboss_color` | `#e8ebee` | Main embossed material colour |
-| `emboss_highlight_color` | `#ffffff` | Upper-left ridge highlight |
-| `emboss_shadow_color` | `#000000` | Lower-right depth and pressure shadow |
+| `tape_color` | `#0b0c0d` | Main plastic colour |
+| `tape_edge_color` | `#010203` | Cut edge and lower tape colour |
+| `emboss_color` | `#eef0f2` | Compressed character material colour |
+| `emboss_highlight_color` | `#ffffff` | Lit upper-left ridge |
+| `emboss_shadow_color` | `#000000` | Lower-right relief shadow |
 | `surface` | `satin` | `glossy`, `satin` or `matte` |
-| `tape_height` | `92` | Tape height in SVG units |
-| `tape_padding` | `30` | Horizontal space around the text |
-| `tape_radius` | `7` | Tape corner radius |
-| `min_tape_width` | `220` | Minimum tape width |
-| `max_width` | `900` | Maximum rendered width in pixels |
-| `curve` | `1.5` | Slight mechanical bow; `0` is straight |
-| `end_slant` | `1.5` | Cut-end asymmetry |
-
-### Embossed characters
-
-| Option | Default | Purpose |
-|---|---:|---|
-| `font_size` | `45` | Character size |
-| `font_family` | narrow system stack | Local condensed font stack |
-| `font_weight` | `300` | Character skeleton weight |
-| `letter_spacing` | `7` | Nominal character spacing |
-| `emboss_depth` | `3.2` | Offset between highlight and depth shadow |
-| `emboss_ridge` | `1.65` | Width of the bright embossed crest |
-| `emboss_gloss` | `0.95` | Specular response of the raised face |
-| `emboss_face_opacity` | `0.16` | Translucent central face intensity |
-| `pressure_halo` | `0.8` | Dark plastic compression around each stamp |
-| `character_jitter` | `1.15` | Horizontal character displacement |
-| `rotation_jitter` | `1.25` | Maximum character rotation in degrees |
-| `baseline_jitter` | `1.05` | Vertical character displacement |
-| `spacing_jitter` | `0.75` | Additional irregular spacing |
-| `seed` | `1974` | Repeatable imperfection pattern |
-
-### Panel and screws
-
-| Option | Default | Purpose |
-|---|---:|---|
+| `font_size` | `58` | Internal glyph size |
+| `font_weight` | `300` | Source glyph weight before relief generation |
+| `glyph_scale_x` | `0.76` | Horizontal compression of the embossing-wheel glyph |
+| `letter_spacing` | `10` | Nominal space between independent characters |
+| `emboss_depth` | `1.15` | Height-field normal strength |
+| `emboss_ridge` | `1.4` | Rounded ridge width and mask blur |
+| `emboss_gloss` | `0.55` | Specular intensity |
+| `emboss_face_opacity` | `0.22` | Whitening of the character centre |
+| `pressure_halo` | `0.45` | Plastic deformation around the glyph |
 | `mount` | `panel` | `panel` or `none` |
-| `mount_color` | `#111315` | Main panel colour |
-| `mount_edge_color` | `#030405` | Panel edge colour |
-| `mount_radius` | `18` | Panel corner radius |
-| `frame_padding_x` | `48` | Horizontal space between tape and panel edge |
-| `frame_padding_y` | `18` | Vertical space between tape and panel edge |
-| `frame_padding` | `30` | Compatibility fallback for old configurations |
 | `screws` | `true` | Show mounting screws |
-| `screw_layout` | `ends` | `ends` for two screws or `corners` for four |
-| `screw_color` | `#090a0b` | Screw face colour |
-| `screw_size` | `23` | Screw diameter |
-| `screw_inset` | `10` | Screw offset from the panel edge |
-| `screw_rotation` | `-18` | Base cross-head rotation |
+| `screw_layout` | `ends` | `ends` or `corners` |
+| `max_width` | `900` | Maximum card width in pixels |
 
-### Caption and interaction
+## Mechanical imperfections
 
-| Option | Default | Purpose |
-|---|---:|---|
-| `show_name` | `false` | Show a caption below the plate |
-| `name` | entity name | Caption override |
-| `name_color` | theme text | Caption colour |
-| `name_size` | `14` | Caption size |
-| `animate` | `true` | Mechanical press animation when text changes |
-| `tap_action` | `more-info` | Action on click or tap |
-| `hold_action` | `none` | Action on hold or context menu |
+The card uses deterministic differences rather than random movement on every update:
+
+```yaml
+character_jitter: 1.0
+rotation_jitter: 0.75
+baseline_jitter: 0.9
+spacing_jitter: 0.65
+seed: 1974
+```
+
+Changing `seed` creates a different but stable stamping pattern.
 
 ## Actions
 
 Supported actions:
 
 - `more-info`
-- `navigate` with `navigation_path`
-- `url` with `url_path`
+- `navigate`
+- `url`
 - `toggle`
-- `call-service` with `service` and `service_data`
-- `perform-action` with `perform_action` and `data`
+- `call-service`
+- `perform-action`
 - `none`
+
+Example:
+
+```yaml
+tap_action:
+  action: more-info
+hold_action:
+  action: navigate
+  navigation_path: /lovelace/system
+```
+
+## Updating from 0.2
+
+Version 0.2 used large stacked SVG strokes. Values such as `emboss_depth: 3.2`, `emboss_ridge: 1.65` and `emboss_gloss: 0.95` were tuned for that renderer and are no longer recommended.
+
+For the intended 0.3 appearance, remove old relief overrides or use the values from the reference configuration. After updating through HACS, perform a cache-free browser reload. All ES-module imports contain `v=0.3.0` to prevent the old renderer remaining in cache.
+
+## Responsive rendering
+
+The card keeps its full internal geometry and scales into the available Lovelace column. A `ResizeObserver` automatically redraws the Canvas at the real displayed size and device-pixel ratio, preventing horizontal overflow and avoiding blurred upscaling on wide desktop cards.
 
 ## Development check
 
