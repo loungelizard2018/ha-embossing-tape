@@ -1,7 +1,7 @@
 {
   "name": "ha-embossing-tape",
-  "version": "0.1.0",
-  "description": "Photorealistic vintage embossing tape card for Home Assistant dashboards",
+  "version": "0.2.0",
+  "description": "Photorealistic deep-relief vintage embossing tape card for Home Assistant dashboards",
   "license": "MIT",
   "private": false,
   "scripts": {
