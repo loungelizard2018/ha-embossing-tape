@@ -1,51 +1,47 @@
 type: custom:embossing-tape-card
 entity: sensor.bigpool_cpu_temperature
 decimals: 1
-suffix: " C"
 
-# Version 0.3 photorealistic black embossing-tape reference.
-# The default values already produce this appearance; the options are shown
-# explicitly so the complete visual model can be reproduced and adjusted.
-tape_color: "#0b0c0d"
+# Version 0.4 numeric-only pre-rendered asset mode.
+# Supported characters: 0-9 . , - and space.
+render_mode: numeric_assets
+asset_theme: black_classic
+invalid_character: error
+
+# The glyphs themselves are fixed photorealistic atlas assets.
+glyph_height: 88
+glyph_gap: 8
+space_width: 38
+
+# Small deterministic imperfections from a mechanical embossing wheel.
+character_jitter: 0.8
+rotation_jitter: 0.45
+baseline_jitter: 0.65
+spacing_jitter: 0.5
+curve: 0.8
+seed: 1974
+
+# Black classic tape and panel.
+tape_color: "#060809"
 tape_edge_color: "#010203"
-tape_highlight_color: "#ffffff"
-emboss_color: "#eef0f2"
-emboss_highlight_color: "#ffffff"
-emboss_shadow_color: "#000000"
-surface: satin
+tape_highlight_color: "#363b40"
+tape_height: 130
+tape_padding: 34
+tape_radius: 10
+min_tape_width: 260
 
 mount: panel
 mount_color: "#111315"
 mount_edge_color: "#030405"
-mount_radius: 20
-frame_padding_x: 54
-frame_padding_y: 22
+mount_radius: 24
+frame_padding_x: 58
+frame_padding_y: 26
 
 screws: true
 screw_layout: ends
 screw_color: "#090a0b"
-screw_size: 24
-screw_inset: 10
+screw_size: 25
+screw_inset: 11
 screw_rotation: -18
-
-font_size: 58
-font_weight: 300
-glyph_scale_x: 0.76
-letter_spacing: 10
-
-# Canvas height-field relief controls.
-emboss_depth: 1.15
-emboss_ridge: 1.4
-emboss_gloss: 0.55
-emboss_face_opacity: 0.22
-pressure_halo: 0.45
-
-# Small deterministic imperfections from the embossing wheel.
-character_jitter: 1.0
-rotation_jitter: 0.75
-baseline_jitter: 0.9
-spacing_jitter: 0.65
-curve: 1.2
-seed: 1974
 
 max_width: 900
