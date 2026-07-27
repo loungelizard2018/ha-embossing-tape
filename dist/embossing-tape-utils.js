@@ -16,46 +16,47 @@ export const DEFAULTS = {
   tape_color: "#0b0c0d",
   tape_edge_color: "#010203",
   tape_highlight_color: "#ffffff",
-  emboss_color: "#e8ebee",
+  emboss_color: "#eef0f2",
   emboss_highlight_color: "#ffffff",
   emboss_shadow_color: "#000000",
   surface: "satin",
-  tape_height: 92,
-  tape_padding: 30,
+  tape_height: 96,
+  tape_padding: 34,
   tape_radius: 7,
-  min_tape_width: 220,
+  min_tape_width: 240,
   max_width: 900,
 
-  font_size: 45,
-  font_family: "Arial Narrow, Roboto Condensed, Helvetica Neue, Arial, sans-serif",
+  font_size: 58,
+  font_family: "Roboto, Helvetica Neue, Arial, sans-serif",
   font_weight: 300,
-  letter_spacing: 7,
-  character_jitter: 1.15,
-  rotation_jitter: 1.25,
-  baseline_jitter: 1.05,
-  spacing_jitter: 0.75,
+  glyph_scale_x: 0.76,
+  letter_spacing: 10,
+  character_jitter: 1.0,
+  rotation_jitter: 0.75,
+  baseline_jitter: 0.9,
+  spacing_jitter: 0.65,
   seed: 1974,
-  curve: 1.5,
-  end_slant: 1.5,
+  curve: 1.2,
+  end_slant: 1.2,
 
-  emboss_depth: 3.2,
-  emboss_ridge: 1.65,
-  emboss_gloss: 0.95,
-  emboss_face_opacity: 0.16,
-  pressure_halo: 0.8,
+  emboss_depth: 1.15,
+  emboss_ridge: 1.4,
+  emboss_gloss: 0.55,
+  emboss_face_opacity: 0.22,
+  pressure_halo: 0.45,
 
   mount: "panel",
   mount_color: "#111315",
   mount_edge_color: "#030405",
-  mount_radius: 18,
+  mount_radius: 20,
   frame_padding: 30,
-  frame_padding_x: 48,
-  frame_padding_y: 18,
+  frame_padding_x: 54,
+  frame_padding_y: 22,
 
   screws: true,
   screw_layout: "ends",
   screw_color: "#090a0b",
-  screw_size: 23,
+  screw_size: 24,
   screw_inset: 10,
   screw_rotation: -18,
 
@@ -71,12 +72,12 @@ export const DEFAULTS = {
 export function validate(cfg) {
   const numeric = [
     "max_length", "pad_to", "tape_height", "tape_padding", "tape_radius",
-    "min_tape_width", "max_width", "font_size", "font_weight", "letter_spacing",
-    "character_jitter", "rotation_jitter", "baseline_jitter", "spacing_jitter",
-    "seed", "curve", "end_slant", "emboss_depth", "emboss_ridge", "emboss_gloss",
-    "emboss_face_opacity", "pressure_halo", "frame_padding", "frame_padding_x",
-    "frame_padding_y", "mount_radius", "screw_size", "screw_inset",
-    "screw_rotation", "name_size"
+    "min_tape_width", "max_width", "font_size", "font_weight", "glyph_scale_x",
+    "letter_spacing", "character_jitter", "rotation_jitter", "baseline_jitter",
+    "spacing_jitter", "seed", "curve", "end_slant", "emboss_depth",
+    "emboss_ridge", "emboss_gloss", "emboss_face_opacity", "pressure_halo",
+    "frame_padding", "frame_padding_x", "frame_padding_y", "mount_radius",
+    "screw_size", "screw_inset", "screw_rotation", "name_size"
   ];
 
   for (const key of numeric) {
@@ -90,6 +91,9 @@ export function validate(cfg) {
   }
   if (Number(cfg.font_size) < 12) {
     throw new Error("embossing-tape-card: 'font_size' must be at least 12");
+  }
+  if (Number(cfg.glyph_scale_x) <= 0) {
+    throw new Error("embossing-tape-card: 'glyph_scale_x' must be greater than 0");
   }
   if (Number(cfg.emboss_depth) < 0 || Number(cfg.emboss_ridge) <= 0) {
     throw new Error("embossing-tape-card: emboss_depth must be >= 0 and emboss_ridge must be > 0");
@@ -174,10 +178,10 @@ export function displayText(cfg, stateObj) {
 
 export function surfaceSettings(name) {
   if (name === "matte") {
-    return { glare: 0.055, noise: 0.18, specular: 0.34, roughness: 0.72 };
+    return { glare: 0.045, noise: 0.085, specular: 0.26, roughness: 0.78 };
   }
   if (name === "glossy") {
-    return { glare: 0.24, noise: 0.075, specular: 1.08, roughness: 0.22 };
+    return { glare: 0.2, noise: 0.045, specular: 0.82, roughness: 0.26 };
   }
-  return { glare: 0.12, noise: 0.12, specular: 0.72, roughness: 0.45 };
+  return { glare: 0.11, noise: 0.06, specular: 0.5, roughness: 0.48 };
 }
