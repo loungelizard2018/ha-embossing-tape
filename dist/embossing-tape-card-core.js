@@ -1,5 +1,5 @@
-import { DEFAULTS, displayText, validate } from "./embossing-tape-utils.js?v=0.3.0";
-import { drawEmbossingTape, renderMarkup } from "./embossing-tape-render.js?v=0.3.0";
+import { DEFAULTS, displayText, validate } from "./embossing-tape-utils.js?v=0.4.0";
+import { drawEmbossingTape, renderError, renderMarkup } from "./embossing-tape-render.js?v=0.4.0";
 
 export class EmbossingTapeCard extends HTMLElement {
   constructor() {
@@ -7,8 +7,8 @@ export class EmbossingTapeCard extends HTMLElement {
     this.attachShadow({ mode: "open" });
     this._config = null;
     this._hass = null;
-    this._lastText = null;
     this._resizeObserver = null;
+    this._lastRenderKey = "";
   }
 
   disconnectedCallback() {
@@ -19,18 +19,13 @@ export class EmbossingTapeCard extends HTMLElement {
   static getStubConfig() {
     return {
       type: "custom:embossing-tape-card",
-      text: "MUSIC IS LIFE",
-      tape_color: "#0b0c0d",
-      emboss_color: "#eef0f2",
-      surface: "satin",
+      entity: "sensor.example_numeric",
+      decimals: 1,
+      render_mode: "numeric_assets",
+      asset_theme: "black_classic",
       mount: "panel",
       screws: true,
-      screw_layout: "ends",
-      glyph_scale_x: 0.76,
-      character_jitter: 1,
-      rotation_jitter: 0.75,
-      baseline_jitter: 0.9,
-      curve: 1.2
+      screw_layout: "ends"
     };
   }
 
@@ -40,6 +35,7 @@ export class EmbossingTapeCard extends HTMLElement {
     }
     this._config = { ...DEFAULTS, ...config };
     validate(this._config);
+    this._lastRenderKey = "";
     this._render();
   }
 
@@ -53,11 +49,7 @@ export class EmbossingTapeCard extends HTMLElement {
   }
 
   getGridOptions() {
-    return {
-      columns: "full",
-      rows: this._config?.show_name ? 2 : 1,
-      min_rows: 1
-    };
+    return { columns: "full", rows: this._config?.show_name ? 2 : 1, min_rows: 1 };
   }
 
   _state() {
@@ -72,25 +64,33 @@ export class EmbossingTapeCard extends HTMLElement {
 
   _render() {
     if (!this._config) return;
-
     const cfg = this._config;
     const state = this._state();
-    const text = displayText(cfg, state);
-    this._lastText = text;
+    let text;
+    try {
+      text = displayText(cfg, state);
+    } catch (error) {
+      this._resizeObserver?.disconnect();
+      this.shadowRoot.innerHTML = renderError(error.message || String(error));
+      return;
+    }
 
-    const name = cfg.name || state?.attributes?.friendly_name || cfg.entity || "Embossing tape";
+    const name = cfg.name || state?.attributes?.friendly_name || cfg.entity || "Numeric embossing tape";
     const active = this._actionName(cfg.tap_action) !== "none"
       || this._actionName(cfg.hold_action) !== "none";
+    const renderKey = JSON.stringify([text, cfg, name, active]);
+    if (renderKey === this._lastRenderKey && this.shadowRoot.querySelector(".emboss-canvas")) return;
+    this._lastRenderKey = renderKey;
 
     this.shadowRoot.innerHTML = renderMarkup(cfg, text, name, active);
     const canvas = this.shadowRoot.querySelector(".emboss-canvas");
     const card = this.shadowRoot.querySelector(".card");
-    drawEmbossingTape(canvas, cfg, text);
-    document.fonts?.ready.then(() => {
-      if (this.isConnected && canvas === this.shadowRoot.querySelector(".emboss-canvas")) {
-        drawEmbossingTape(canvas, cfg, text);
+    drawEmbossingTape(canvas, cfg, text).catch((error) => {
+      if (canvas === this.shadowRoot.querySelector(".emboss-canvas")) {
+        this.shadowRoot.innerHTML = renderError(error.message || String(error));
       }
     });
+
     this._resizeObserver?.disconnect();
     if (typeof ResizeObserver !== "undefined" && card) {
       let previousWidth = card.getBoundingClientRect().width;
@@ -100,27 +100,27 @@ export class EmbossingTapeCard extends HTMLElement {
         previousWidth = width;
         requestAnimationFrame(() => {
           if (this.isConnected && canvas === this.shadowRoot.querySelector(".emboss-canvas")) {
-            drawEmbossingTape(canvas, cfg, text);
+            drawEmbossingTape(canvas, cfg, text).catch(() => {});
           }
         });
       });
       this._resizeObserver.observe(card);
     }
 
-    card?.addEventListener("click", (event) => this._act("tap", event));
+    card?.addEventListener("click", () => this._act("tap"));
     card?.addEventListener("contextmenu", (event) => {
       event.preventDefault();
-      this._act("hold", event);
+      this._act("hold");
     });
     card?.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        this._act("tap", event);
+        this._act("tap");
       }
     });
   }
 
-  _act(kind, event) {
+  _act(kind) {
     const cfg = kind === "hold" ? this._config.hold_action : this._config.tap_action;
     const action = this._actionName(cfg);
     if (!action || action === "none") return;
@@ -135,23 +135,19 @@ export class EmbossingTapeCard extends HTMLElement {
       }
       return;
     }
-
     if (action === "navigate" && cfg.navigation_path) {
       history.pushState(null, "", cfg.navigation_path);
       window.dispatchEvent(new CustomEvent("location-changed"));
       return;
     }
-
     if (action === "url" && cfg.url_path) {
       window.open(cfg.url_path, cfg.new_tab === false ? "_self" : "_blank", "noopener");
       return;
     }
-
     if (action === "toggle" && this._config.entity && this._hass) {
       this._hass.callService("homeassistant", "toggle", { entity_id: this._config.entity });
       return;
     }
-
     if ((action === "call-service" || action === "perform-action") && this._hass) {
       const fullAction = cfg.service || cfg.perform_action;
       if (!fullAction?.includes(".")) return;
