@@ -1,30 +1,34 @@
 # Changelog
 
+## 0.4.0 — 2026-07-27
+
+- Converted the card into a numeric-only embossing-tape display.
+- Supported characters are `0-9`, point, comma, minus and space.
+- Removed generic browser-font rendering from the displayed value.
+- Removed procedural SVG and Canvas-generated glyph relief.
+- Added the fixed `black_classic` pre-rendered glyph atlas.
+- Added runtime atlas cell extraction with transparent backing while preserving the original rendered relief pixels.
+- Added `render_mode: numeric_assets` and `asset_theme: black_classic`.
+- Added strict unsupported-character validation with `invalid_character: error|space`.
+- Added `glyph_height`, `glyph_gap` and `space_width` controls.
+- Retained deterministic position, baseline, spacing and rotation imperfections.
+- Retained responsive panel, tape, screw layouts, entity/attribute sources and Home Assistant actions.
+- Changed the unavailable default to `--`, which is supported by the numeric atlas.
+- Removed obsolete font, emboss-depth, ridge, gloss and glyph-colour options from the documented configuration.
+- Versioned all module imports with `0.4.0` to invalidate older cached renderers.
+
 ## 0.3.0 — 2026-07-27
 
-- Removed the SVG multi-stroke character renderer that produced a chrome-outline or extruded-font appearance.
-- Rebuilt the visual engine around a responsive high-resolution Canvas renderer.
-- Every glyph is converted to a height field and shaded from a virtual upper-left light source.
-- Added physically derived relief normals, diffuse shading, specular highlights, pressure deformation and lower-right contact shadowing.
-- Character interiors now remain dark and translucent while the compressed ridges become silver-white, matching real black embossing tape.
-- Added deterministic micro-irregularity and fine material grain without the former horizontal wood-grain effect.
-- Added `glyph_scale_x` for a consistently narrow mechanical embossing-wheel appearance independent of the local browser font.
-- Reduced the default rotation and baseline variation to realistic mechanical tolerances.
-- Reworked the black panel, inset tape and two end screws to match the approved industrial reference proportions.
-- Added high-DPI rendering and automatic redraw through `ResizeObserver` for sharp desktop, tablet and mobile output.
-- Retained dynamic entity states, attributes, static text, colours, actions, alternate screw layouts and HACS installation.
-- Versioned every ES-module import with `0.3.0` to invalidate cached 0.2 renderer modules.
+- Replaced the SVG renderer with a dynamic Canvas height-field renderer.
+- Added responsive high-DPI drawing and material shading.
 
 ## 0.2.0 — 2026-07-27
 
 - Introduced a layered SVG deep-relief renderer.
-- Added configurable emboss depth, ridge, gloss, face opacity and pressure halo controls.
-- Added separate emboss highlight and shadow colours.
-- Added black panel defaults, two end screws and Home Assistant grid sizing.
+- Added black panel defaults and two end screws.
 
 ## 0.1.0 — 2026-07-27
 
 - Initial HACS-installable release.
 - Dynamic entity state, entity attribute or static text source.
-- Deterministic per-character baseline, spacing and rotation differences.
-- Configurable tape, lettering, panel and screw colours.
+- Configurable tape, panel, screw colours and actions.
